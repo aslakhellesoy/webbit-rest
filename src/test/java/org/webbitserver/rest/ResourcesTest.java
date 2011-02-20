@@ -29,6 +29,13 @@ public class ResourcesTest {
         assertReturnedWithStatus(200, response);
     }
 
+    @Test
+    public void responds_with_illegal_method() throws Exception {
+        handler = handler(new Resource());
+        StubHttpResponse response = handle(request("/hello").method("POST"));
+        assertReturnedWithStatus(405, response);
+    }
+
     private HttpHandler handler(Object resource) {
         Executor immediateExecutor = new Executor() {
             @Override

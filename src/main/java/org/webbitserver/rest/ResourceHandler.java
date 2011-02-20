@@ -52,28 +52,31 @@ class ResourceHandler implements HttpHandler {
             control.execute(new Runnable() {
                 @Override
                 public void run() {
-                    final Method method = findMethod(VERBS.get(request.method().toUpperCase()));
                     try {
+                        Method method = findMethod(VERBS.get(request.method().toUpperCase()));
                         String content = String.valueOf(method.invoke(resource));
-                        response.content(content).end();
+                        response.content(content);
+                    } catch (ResourceException e) {
+                        response.status(e.status);
                     } catch (IllegalAccessException e) {
                         response.error(e);
                     } catch (InvocationTargetException e) {
                         response.error(e.getTargetException());
+                    } finally {
+                        response.end();
                     }
                 }
             });
         }
 
-        private Method findMethod(Class<Annotation> annotation) {
+        private Method findMethod(Class<Annotation> annotation) throws ResourceException {
             Method[] methods = resource.getClass().getMethods();
             for (Method method : methods) {
                 if (method.isAnnotationPresent(annotation)) {
                     return method;
                 }
             }
-            return null;
+            throw ResourceException.METHOD_NOT_ALLOWED;
         }
-
     }
 }
