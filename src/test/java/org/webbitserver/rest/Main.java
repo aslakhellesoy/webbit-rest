@@ -10,18 +10,27 @@ import static org.webbitserver.WebServers.createWebServer;
 
 public class Main {
 
-    @Path("/helloworld")
-    public static class HelloWorldResource {
+    @Path("/hello")
+    public static class HelloResource {
         @GET
         @Produces("text/plain")
         public String getClichedMessage() {
-            return "Hello World";
+            return "Hello";
+        }
+    }
+
+    @Path("/world")
+    public static class WorldResource {
+        @GET
+        @Produces("text/plain")
+        public String getClichedMessage() {
+            return "World";
         }
     }
 
     public static void main(String[] args) throws Exception {
         WebServer webServer = createWebServer(9877);
-        new Resources(new HelloWorldResource()).addTo(webServer);
+        new Resources(new HelloResource(), new WorldResource()).addTo(webServer);
         webServer.start();
 
         System.out.println("REST app running on: " + webServer.getUri());

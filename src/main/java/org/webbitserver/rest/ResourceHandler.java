@@ -6,13 +6,15 @@ import org.webbitserver.HttpRequest;
 import org.webbitserver.HttpResponse;
 
 import javax.ws.rs.*;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
-public class ResourceHandler implements HttpHandler {
-    private final Object resource;
-    private static final Map<String,Class> VERBS = new HashMap<String,Class>() {{
+class ResourceHandler implements HttpHandler {
+    private static final Map<String, Class> VERBS = new HashMap<String, Class>() {{
         put("GET", GET.class);
         put("PUT", PUT.class);
         put("POST", POST.class);
@@ -21,30 +23,57 @@ public class ResourceHandler implements HttpHandler {
         put("OPTIONS", OPTIONS.class);
     }};
 
-    public ResourceHandler(Object resource) {
+    private final Object resource;
+    private final Executor executor;
+
+    public ResourceHandler(Executor executor, Object resource) {
         this.resource = resource;
+        this.executor = executor;
     }
 
     @Override
-    public void handleHttpRequest(HttpRequest request, final HttpResponse response, HttpControl control) throws Exception {
-        String verb = request.method().toUpperCase();
-        final Method method = findMethod(verb);
-        String content = String.valueOf(method.invoke(resource));
-        response.content(content).end();
+    public void handleHttpRequest(final HttpRequest request, final HttpResponse response, final HttpControl control) throws Exception {
+        executor.execute(new ResourceWorker(request, control, response));
     }
 
-    private Method findMethod(String verb) {
-        Class ann = annotationForVerb(verb);
-        Method[] methods = resource.getClass().getMethods();
-        for (Method method : methods) {
-            if(method.isAnnotationPresent(ann)) {
-                return method;
-            }
+    private class ResourceWorker implements Runnable {
+        private final HttpRequest request;
+        private final HttpControl control;
+        private final HttpResponse response;
+
+        public ResourceWorker(HttpRequest request, HttpControl control, HttpResponse response) {
+            this.request = request;
+            this.control = control;
+            this.response = response;
         }
-        throw new IllegalStateException("No methods tagged with " + ann);
-    }
 
-    private Class annotationForVerb(String verb) {
-        return VERBS.get(verb);
+        @Override
+        public void run() {
+            control.execute(new Runnable() {
+                @Override
+                public void run() {
+                    final Method method = findMethod(VERBS.get(request.method().toUpperCase()));
+                    try {
+                        String content = String.valueOf(method.invoke(resource));
+                        response.content(content).end();
+                    } catch (IllegalAccessException e) {
+                        response.error(e);
+                    } catch (InvocationTargetException e) {
+                        response.error(e.getTargetException());
+                    }
+                }
+            });
+        }
+
+        private Method findMethod(Class<Annotation> annotation) {
+            Method[] methods = resource.getClass().getMethods();
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(annotation)) {
+                    return method;
+                }
+            }
+            return null;
+        }
+
     }
 }
