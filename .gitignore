@@ -1,0 +1,9 @@
+target/
+
+out
+build
+
+*.iws
+*.swp
+*.iml
+*.ipr
