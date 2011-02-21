@@ -27,7 +27,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         WebServer webServer = WebServers.createWebServer(9877);
-        webServer.add(".*", new ResteasyHandler(Main.class));
+        webServer.add(".*", new ResteasyHandler());
         webServer.start();
 
         System.out.println("Try this: curl " + webServer.getUri() + "hello");

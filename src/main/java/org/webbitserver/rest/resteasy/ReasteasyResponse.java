@@ -47,7 +47,7 @@ public class ReasteasyResponse implements org.jboss.resteasy.spi.HttpResponse {
 
     @Override
     public void sendError(int status) throws IOException {
-        throw new UnsupportedOperationException();
+        httpResponse.status(status);
     }
 
     @Override
