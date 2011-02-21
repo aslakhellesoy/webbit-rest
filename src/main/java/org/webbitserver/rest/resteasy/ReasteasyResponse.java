@@ -8,10 +8,10 @@ import javax.ws.rs.core.NewCookie;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class WebbitHttpResponseImpl implements org.jboss.resteasy.spi.HttpResponse {
+public class ReasteasyResponse implements org.jboss.resteasy.spi.HttpResponse {
     private final HttpResponse httpResponse;
 
-    public WebbitHttpResponseImpl(HttpResponse httpResponse) {
+    public ReasteasyResponse(HttpResponse httpResponse) {
         this.httpResponse = httpResponse;
     }
 
@@ -22,7 +22,7 @@ public class WebbitHttpResponseImpl implements org.jboss.resteasy.spi.HttpRespon
 
     @Override
     public void setStatus(int status) {
-        System.out.println("status = " + status);
+        httpResponse.status(status);
     }
 
     @Override
@@ -42,14 +42,17 @@ public class WebbitHttpResponseImpl implements org.jboss.resteasy.spi.HttpRespon
 
     @Override
     public void addNewCookie(NewCookie cookie) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void sendError(int status) throws IOException {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void sendError(int status, String message) throws IOException {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -59,6 +62,5 @@ public class WebbitHttpResponseImpl implements org.jboss.resteasy.spi.HttpRespon
 
     @Override
     public void reset() {
-        System.out.println("RESET");
     }
 }

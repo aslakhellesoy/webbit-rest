@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WebbitBootstrap extends ConfigurationBootstrap {
-    private static final Map<String,String> PARAMS = new HashMap<String,String>(){{
+    private static final Map<String, String> PARAMS = new HashMap<String, String>() {{
         put("resteasy.scan", "true");
     }};
     private final URL[] scanningUrls;
@@ -18,7 +18,6 @@ public class WebbitBootstrap extends ConfigurationBootstrap {
 
     @Override
     public String getParameter(String key) {
-        System.out.println("s = " + key);
         return PARAMS.get(key);
     }
 

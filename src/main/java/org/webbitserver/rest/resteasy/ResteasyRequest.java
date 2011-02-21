@@ -14,13 +14,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class WebbitHttpRequestImpl extends HttpRequestImpl {
-    public WebbitHttpRequestImpl(InputStream inputStream, HttpHeaders httpHeaders, String httpMethod, UriInfo uri) {
+public class ResteasyRequest extends HttpRequestImpl {
+    public ResteasyRequest(InputStream inputStream, HttpHeaders httpHeaders, String httpMethod, UriInfo uri) {
         super(inputStream, httpHeaders, httpMethod, uri);
     }
 
     @Override
     public void setInputStream(InputStream stream) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -34,6 +35,7 @@ public class WebbitHttpRequestImpl extends HttpRequestImpl {
 
     @Override
     public void removeAttribute(String name) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -50,7 +52,7 @@ public class WebbitHttpRequestImpl extends HttpRequestImpl {
     public void initialRequestThreadFinished() {
     }
 
-    public static WebbitHttpRequestImpl wrap(final HttpRequest request) {
+    public static ResteasyRequest wrap(final HttpRequest request) {
         HttpHeaders headers = new HttpHeaders() {
             @Override
             public List<String> getRequestHeader(String name) {
@@ -91,6 +93,6 @@ public class WebbitHttpRequestImpl extends HttpRequestImpl {
             }
         };
         UriInfo uriInfo = new UriInfoImpl(null, null, request.uri(), null, PathSegmentImpl.parseSegments(request.uri()));
-        return new WebbitHttpRequestImpl(null, headers, request.method(), uriInfo);
+        return new ResteasyRequest(null, headers, request.method(), uriInfo);
     }
 }

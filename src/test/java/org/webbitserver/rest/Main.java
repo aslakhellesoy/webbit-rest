@@ -1,6 +1,7 @@
 package org.webbitserver.rest;
 
 import org.webbitserver.WebServer;
+import org.webbitserver.rest.resteasy.ResteasyHandler;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -30,7 +31,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         WebServer webServer = createWebServer(9877);
-        new Resources(new HelloResource(), new WorldResource()).addTo(webServer);
+        webServer.add(new ResteasyHandler(Main.class));
         webServer.start();
 
         System.out.println("REST app running on: " + webServer.getUri());
