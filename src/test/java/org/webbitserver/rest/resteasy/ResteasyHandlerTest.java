@@ -29,6 +29,14 @@ public class ResteasyHandlerTest {
         assertReturnedWithStatus(405, response);
     }
 
+    @Test
+    public void responds_with_404() throws Exception {
+        handler = handler();
+        StubHttpResponse response = handle(request("/nuffink").method("GET"));
+        assertEquals("", response.contentsString());
+        assertReturnedWithStatus(404, response);
+    }
+
     private HttpHandler handler() {
         URL[] scanningUrls = new URL[]{getClass().getProtectionDomain().getCodeSource().getLocation()};
         return new ResteasyHandler(scanningUrls);
