@@ -1,3 +1,9 @@
+Webbit REST
+===========
+
+Webbit REST brings JAX-RS (JSR-311) to Webbit. Here is a quick example:
+
+<pre>
 package org.webbitserver.rest;
 
 import org.webbitserver.WebServer;
@@ -27,3 +33,6 @@ public class Main {
         System.out.println("Try this: curl " + webServer.getUri() + "hello");
     }
 }
+</pre>
+
+Webbit-REST uses [RestEasy](http://www.jboss.org/resteasy) under the hood.
