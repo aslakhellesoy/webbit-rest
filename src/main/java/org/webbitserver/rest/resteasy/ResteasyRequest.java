@@ -1,18 +1,16 @@
 package org.webbitserver.rest.resteasy;
 
 import org.jboss.resteasy.specimpl.PathSegmentImpl;
+import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jboss.resteasy.specimpl.UriInfoImpl;
 import org.jboss.resteasy.spi.AsynchronousResponse;
-import org.jboss.resteasy.util.HttpHeaderNames;
 import org.jboss.resteasy.util.HttpRequestImpl;
 import org.webbitserver.HttpRequest;
 
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.UriInfo;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.net.URI;
 
 public class ResteasyRequest extends HttpRequestImpl {
     public ResteasyRequest(InputStream inputStream, HttpHeaders httpHeaders, String httpMethod, UriInfo uri) {
@@ -53,46 +51,13 @@ public class ResteasyRequest extends HttpRequestImpl {
     }
 
     public static ResteasyRequest wrap(final HttpRequest request) {
-        HttpHeaders headers = new HttpHeaders() {
-            @Override
-            public List<String> getRequestHeader(String name) {
-                throw new UnsupportedOperationException();
-            }
+        HttpHeaders headers = new RestEasyHeaders(request);
 
-            @Override
-            public MultivaluedMap<String, String> getRequestHeaders() {
-                throw new UnsupportedOperationException();
-            }
+        // see org.jboss.resteasy.plugins.server.servlet.ServletUtil
+        URI uri = new UriBuilderImpl().path(request.uri()).build();
 
-            @Override
-            public List<MediaType> getAcceptableMediaTypes() {
-                String accepts = request.header(HttpHeaderNames.ACCEPT);
-                MediaType mediaType = accepts == null ? MediaType.WILDCARD_TYPE : MediaType.valueOf(accepts);
-                return Collections.singletonList(mediaType);
-            }
-
-            @Override
-            public List<Locale> getAcceptableLanguages() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public MediaType getMediaType() {
-                String contentType = request.header(HttpHeaderNames.CONTENT_TYPE);
-                return contentType == null ? MediaType.WILDCARD_TYPE : MediaType.valueOf(contentType);
-            }
-
-            @Override
-            public Locale getLanguage() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public Map<String, Cookie> getCookies() {
-                throw new UnsupportedOperationException();
-            }
-        };
-        UriInfo uriInfo = new UriInfoImpl(null, null, request.uri(), null, PathSegmentImpl.parseSegments(request.uri()));
+        UriInfo uriInfo = new UriInfoImpl(uri, uri, request.uri(), null, PathSegmentImpl.parseSegments(request.uri()));
         return new ResteasyRequest(null, headers, request.method(), uriInfo);
     }
+
 }

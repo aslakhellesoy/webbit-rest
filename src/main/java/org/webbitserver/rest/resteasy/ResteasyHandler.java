@@ -26,7 +26,7 @@ public class ResteasyHandler implements HttpHandler {
 
     public ResteasyHandler() {
         ClassLoader cl = getClass().getClassLoader();
-        if(cl instanceof URLClassLoader) {
+        if (cl instanceof URLClassLoader) {
             init(((URLClassLoader) cl).getURLs());
         } else {
             throw new RuntimeException("The empty constructor can only be used when the class loader is an URLClassLoader. Use one of the other constructors.");
