@@ -9,7 +9,9 @@ import org.webbitserver.HttpRequest;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
 public class ResteasyRequest extends HttpRequestImpl {
@@ -50,14 +52,16 @@ public class ResteasyRequest extends HttpRequestImpl {
     public void initialRequestThreadFinished() {
     }
 
-    public static ResteasyRequest wrap(final HttpRequest request) {
+    public static ResteasyRequest wrap(final HttpRequest request) throws UnsupportedEncodingException {
         HttpHeaders headers = new RestEasyHeaders(request);
 
         // see org.jboss.resteasy.plugins.server.servlet.ServletUtil
         URI uri = new UriBuilderImpl().path(request.uri()).build();
 
         UriInfo uriInfo = new UriInfoImpl(uri, uri, request.uri(), null, PathSegmentImpl.parseSegments(request.uri()));
-        return new ResteasyRequest(null, headers, request.method(), uriInfo);
+        String body = request.body();
+        InputStream in = body == null ? new ByteArrayInputStream(new byte[0]) : new ByteArrayInputStream(body.getBytes("UTF-8"));
+        return new ResteasyRequest(in, headers, request.method(), uriInfo);
     }
 
 }

@@ -1,5 +1,6 @@
 package org.webbitserver.rest.resteasy;
 
+import org.jboss.resteasy.core.Headers;
 import org.jboss.resteasy.util.HttpHeaderNames;
 import org.jboss.resteasy.util.MediaTypeHelper;
 import org.webbitserver.HttpRequest;
@@ -12,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 class RestEasyHeaders implements HttpHeaders {
     private final HttpRequest request;
@@ -27,7 +29,12 @@ class RestEasyHeaders implements HttpHeaders {
 
     @Override
     public MultivaluedMap<String, String> getRequestHeaders() {
-        throw new UnsupportedOperationException();
+        Headers<String> result = new Headers<String>();
+        List<Entry<String,String>> entries = request.allHeaders();
+        for (Entry<String, String> entry : entries) {
+            result.add(entry.getKey(), entry.getValue());
+        }
+        return result;
     }
 
     @Override
