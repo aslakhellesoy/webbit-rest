@@ -9,16 +9,14 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.net.HttpCookie;
+import java.util.*;
 import java.util.Map.Entry;
 
-class RestEasyHeaders implements HttpHeaders {
+class ResteasyRequestHeaders implements HttpHeaders {
     private final HttpRequest request;
 
-    public RestEasyHeaders(HttpRequest request) {
+    public ResteasyRequestHeaders(HttpRequest request) {
         this.request = request;
     }
 
@@ -30,7 +28,7 @@ class RestEasyHeaders implements HttpHeaders {
     @Override
     public MultivaluedMap<String, String> getRequestHeaders() {
         Headers<String> result = new Headers<String>();
-        List<Entry<String,String>> entries = request.allHeaders();
+        List<Entry<String, String>> entries = request.allHeaders();
         for (Entry<String, String> entry : entries) {
             result.add(entry.getKey(), entry.getValue());
         }
@@ -61,6 +59,11 @@ class RestEasyHeaders implements HttpHeaders {
 
     @Override
     public Map<String, Cookie> getCookies() {
-        throw new UnsupportedOperationException();
+        Map<String, Cookie> result = new HashMap<String, Cookie>();
+        List<HttpCookie> cookies = request.cookies();
+        for (HttpCookie cookie : cookies) {
+            result.put(cookie.getName(), new Cookie(cookie.getName(), cookie.getValue(), cookie.getPath(), cookie.getDomain(), cookie.getVersion()));
+        }
+        return result;
     }
 }

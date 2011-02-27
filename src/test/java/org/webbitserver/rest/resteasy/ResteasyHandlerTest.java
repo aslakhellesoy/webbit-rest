@@ -2,16 +2,35 @@ package org.webbitserver.rest.resteasy;
 
 import org.junit.Test;
 import org.webbitserver.HttpHandler;
-import org.webbitserver.rest.Main;
-import org.webbitserver.rest.Main.HelloResource;
 import org.webbitserver.stub.StubHttpControl;
 import org.webbitserver.stub.StubHttpRequest;
 import org.webbitserver.stub.StubHttpResponse;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import static org.junit.Assert.*;
 
 public class ResteasyHandlerTest {
     private HttpHandler handler;
+
+    @Path("/hello")
+    public static class HelloResource {
+        @GET
+        @Path("{name}")
+        public String hello(@PathParam("name") final String name) {
+            return "Hello " + name;
+        }
+    }
+
+    @Test
+    public void responds_to_get_with_explicitly_registered_resources() throws Exception {
+        handler = new ResteasyHandler(new HelloResource());
+        StubHttpResponse response = handle(request("/hello/world").method("GET"));
+        assertReturnedWithStatus(200, response);
+        assertEquals("Hello world", response.contentsString());
+    }
 
     @Test
     public void responds_to_get() throws Exception {
@@ -19,14 +38,6 @@ public class ResteasyHandlerTest {
         StubHttpResponse response = handle(request("/hello").method("GET"));
         assertEquals("Hello", response.contentsString());
         assertReturnedWithStatus(200, response);
-    }
-
-    @Test
-    public void responds_to_get_with_explicitly_registered_resources() throws Exception {
-        handler = new ResteasyHandler(new HelloResource());
-        StubHttpResponse response = handle(request("/hello").method("GET"));
-        assertReturnedWithStatus(200, response);
-        assertEquals("Hello", response.contentsString());
     }
 
     @Test

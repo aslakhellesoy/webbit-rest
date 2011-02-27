@@ -1,18 +1,21 @@
 package org.webbitserver.rest.resteasy;
 
-import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
+import org.jboss.resteasy.core.Dispatcher;
 import org.webbitserver.HttpResponse;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.HttpCookie;
 
 public class ReasteasyResponse implements org.jboss.resteasy.spi.HttpResponse {
     private final HttpResponse httpResponse;
+    private MultivaluedMap<String, Object> outputHeaders;
 
-    public ReasteasyResponse(HttpResponse httpResponse) {
+    public ReasteasyResponse(HttpResponse httpResponse, Dispatcher dispatcher) {
         this.httpResponse = httpResponse;
+        this.outputHeaders = new WebbitResponseHeaders(httpResponse, dispatcher.getProviderFactory());
     }
 
     @Override
@@ -27,7 +30,7 @@ public class ReasteasyResponse implements org.jboss.resteasy.spi.HttpResponse {
 
     @Override
     public MultivaluedMap<String, Object> getOutputHeaders() {
-        return new MultivaluedMapImpl<String, Object>();
+        return outputHeaders;
     }
 
     @Override
@@ -42,7 +45,13 @@ public class ReasteasyResponse implements org.jboss.resteasy.spi.HttpResponse {
 
     @Override
     public void addNewCookie(NewCookie cookie) {
-        throw new UnsupportedOperationException();
+        HttpCookie httpCookie = new HttpCookie(cookie.getName(), cookie.getValue());
+        httpCookie.setComment(cookie.getComment());
+        httpCookie.setDomain(cookie.getDomain());
+        httpCookie.setMaxAge(cookie.getMaxAge());
+        httpCookie.setVersion(cookie.getVersion());
+        httpCookie.setPath(cookie.getPath());
+        httpResponse.cookie(httpCookie);
     }
 
     @Override

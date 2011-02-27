@@ -15,6 +15,7 @@ public class MessagePublisher implements EventSourceHandler {
 
     static class Outgoing {
         enum Action {JOIN, LEAVE, SAY}
+
         Action action;
         String username;
         String message;
@@ -32,9 +33,10 @@ public class MessagePublisher implements EventSourceHandler {
         broadcast(outgoing);
     }
 
-    public void say(String message) {
+    public void say(String username, String message) {
         Outgoing outgoing = new Outgoing();
         outgoing.action = Outgoing.Action.SAY;
+        outgoing.username = username;
         outgoing.message = message;
         broadcast(outgoing);
     }

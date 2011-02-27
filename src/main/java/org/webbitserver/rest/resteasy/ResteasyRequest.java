@@ -50,10 +50,11 @@ public class ResteasyRequest extends HttpRequestImpl {
 
     @Override
     public void initialRequestThreadFinished() {
+        throw new UnsupportedOperationException();
     }
 
     public static ResteasyRequest wrap(final HttpRequest request) throws UnsupportedEncodingException {
-        HttpHeaders headers = new RestEasyHeaders(request);
+        HttpHeaders headers = new ResteasyRequestHeaders(request);
 
         // see org.jboss.resteasy.plugins.server.servlet.ServletUtil
         URI uri = new UriBuilderImpl().path(request.uri()).build();
