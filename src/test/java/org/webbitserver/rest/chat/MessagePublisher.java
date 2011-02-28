@@ -3,6 +3,7 @@ package org.webbitserver.rest.chat;
 import com.google.gson.Gson;
 import org.webbitserver.EventSourceConnection;
 import org.webbitserver.EventSourceHandler;
+import org.webbitserver.HttpRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +24,23 @@ public class MessagePublisher implements EventSourceHandler {
 
     @Override
     public void onOpen(EventSourceConnection connection) throws Exception {
+        HttpRequest httpRequest = connection.httpRequest();
+        connection.data("username", httpRequest.cookieValue("username"));
         connections.add(connection);
-    }
 
-    public void login(String username) {
         Outgoing outgoing = new Outgoing();
         outgoing.action = Outgoing.Action.JOIN;
-        outgoing.username = username;
+        outgoing.username = (String) connection.data("username");
+        broadcast(outgoing);
+    }
+
+    @Override
+    public void onClose(EventSourceConnection connection) throws Exception {
+        connections.remove(connection);
+
+        Outgoing outgoing = new Outgoing();
+        outgoing.action = Outgoing.Action.LEAVE;
+        outgoing.username = (String) connection.data("username");
         broadcast(outgoing);
     }
 

@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         MessagePublisher messagePublisher = new MessagePublisher();
         MessageResource messageResource = new MessageResource(messagePublisher);
-        SessionResource sessionResource = new SessionResource(messagePublisher);
+        SessionResource sessionResource = new SessionResource();
         WebServer webServer = createWebServer(9876)
                 .add(new LoggingHandler(new SimpleLogSink()))
                 .add(new StaticFileHandler("./src/test/java/org/webbitserver/rest/chat/content"))

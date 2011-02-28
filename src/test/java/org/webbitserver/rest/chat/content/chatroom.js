@@ -22,8 +22,11 @@ function login() {
         xhr.onerror = function(e) {
             logText('* Error:'+ e);
         };
-
-        document.getElementById('entry').focus();
+        xhr.onreadystatechange = function() {
+            if(xhr.readyState == 4 && xhr.status == 200) {
+                connect();
+            }
+        };
     }
 }
 
@@ -51,7 +54,7 @@ function connect() {
     es = new EventSource('message-publisher');
     es.onopen = function(e) {
         logText('* Connected!');
-        login();
+        document.getElementById('entry').focus();
     };
     es.onerror = function(e) {
         logText('* Unexpected error');
@@ -79,4 +82,4 @@ function connect() {
 }
 
 // Connect on load.
-window.onload = connect;
+window.onload = login;
