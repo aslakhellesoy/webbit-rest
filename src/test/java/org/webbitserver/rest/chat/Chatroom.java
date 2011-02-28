@@ -44,6 +44,8 @@ public class Chatroom implements EventSourceHandler {
             Cookie cookie = hh.getCookies().get("username");
             if (cookie != null) {
                 say(cookie.getValue(), message);
+            } else {
+                System.err.println("Someone unauthenticated tried to post a message: " + message);
             }
         }
     }
