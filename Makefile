@@ -19,7 +19,7 @@ helloworld: build/$(LIBRARY)-tests.jar
 
 # Run more elaborate sample
 chatroom: build/$(LIBRARY)-tests.jar
-	java -cp $(CLASSPATH):build/$(LIBRARY).jar:build/$(LIBRARY)-tests.jar org.webbitserver.rest.chatroom.Main
+	java -cp $(CLASSPATH):build/$(LIBRARY).jar:build/$(LIBRARY)-tests.jar org.webbitserver.rest.chat.Main
 
 # Function to find files in directory with suffix. $(call find,dir,ext)
 find = $(shell find $(1) -name '*.$(2)')
