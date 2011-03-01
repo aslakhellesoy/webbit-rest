@@ -9,7 +9,7 @@ function logText(msg) {
     textArea.scrollTop = textArea.scrollHeight; // scroll into view
 }
 
-// Perform login: Ask user for name, and send message to socket.
+// Perform login: Ask user for name, and post request over xhr.
 function login() {
     var defaultUsername = (window.localStorage && window.localStorage.username) || 'yourname';
     var username = prompt('Choose a username', defaultUsername);
@@ -22,8 +22,12 @@ function login() {
         xhr.onerror = function(e) {
             logText('* Error:'+ e);
         };
-
-        document.getElementById('entry').focus();
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            connect();
+            document.getElementById('entry').focus();
+          }
+        };
     }
 }
 
@@ -51,7 +55,6 @@ function connect() {
     es = new EventSource('message-publisher');
     es.onopen = function(e) {
         logText('* Connected!');
-        login();
     };
     es.onerror = function(e) {
         logText('* Unexpected error');
@@ -79,4 +82,4 @@ function connect() {
 }
 
 // Connect on load.
-window.onload = connect;
+window.onload = login;
