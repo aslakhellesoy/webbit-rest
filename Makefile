@@ -17,7 +17,7 @@ test: build/.tests-pass
 helloworld: build/$(LIBRARY)-tests.jar
 	java -cp $(CLASSPATH):build/$(LIBRARY).jar:build/$(LIBRARY)-tests.jar org.webbitserver.rest.Main
 
-# Run more elaborate sample
+# Run sample
 chatroom: build/$(LIBRARY)-tests.jar
 	java -cp $(CLASSPATH):build/$(LIBRARY).jar:build/$(LIBRARY)-tests.jar org.webbitserver.rest.chat.Main
 
