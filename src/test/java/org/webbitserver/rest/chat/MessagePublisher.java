@@ -1,16 +1,16 @@
 package org.webbitserver.rest.chat;
 
 import com.google.gson.Gson;
-import org.webbitserver.EventSourceConnection;
-import org.webbitserver.EventSourceHandler;
+import org.webbitserver.CometConnection;
+import org.webbitserver.CometHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MessagePublisher implements EventSourceHandler {
+public class MessagePublisher implements CometHandler {
     public static final String USERNAME_KEY = "username";
 
-    private final List<EventSourceConnection> connections = new ArrayList<EventSourceConnection>();
+    private final List<CometConnection> connections = new ArrayList<CometConnection>();
     private final Gson json = new Gson();
 
     static class Outgoing {
@@ -22,8 +22,13 @@ public class MessagePublisher implements EventSourceHandler {
     }
 
     @Override
-    public void onOpen(EventSourceConnection connection) throws Exception {
+    public void onOpen(CometConnection connection) throws Exception {
         connections.add(connection);
+    }
+
+    @Override
+    public void onClose(CometConnection connection) throws Exception {
+        connections.remove(connection);
     }
 
     public void login(String username) {
@@ -43,7 +48,7 @@ public class MessagePublisher implements EventSourceHandler {
 
     private void broadcast(Outgoing outgoing) {
         String jsonStr = this.json.toJson(outgoing);
-        for (EventSourceConnection connection : connections) {
+        for (CometConnection connection : connections) {
             connection.send(jsonStr);
         }
     }
