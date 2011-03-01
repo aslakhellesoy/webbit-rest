@@ -23,10 +23,10 @@ function login() {
             logText('* Error:'+ e);
         };
         xhr.onreadystatechange = function() {
-          if (xhr.readyState == 4 && xhr.status == 200) {
-            connect();
-            document.getElementById('entry').focus();
-          }
+            if(xhr.readyState == 4 && xhr.status == 200) {
+                connect();
+                document.getElementById('entry').focus();
+            }
         };
     }
 }
