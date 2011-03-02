@@ -73,6 +73,11 @@ public class Chatroom implements CometHandler {
         broadcast(outgoing);
     }
 
+    @Override
+    public void onMessage(CometConnection connection, String msg) throws Exception {
+        throw new IllegalStateException("Use the REST API instead");
+    }
+
     private void say(String username, String message) {
         Outgoing outgoing = new Outgoing();
         outgoing.action = Outgoing.Action.SAY;
