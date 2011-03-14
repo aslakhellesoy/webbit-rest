@@ -1,6 +1,8 @@
 package org.webbitserver.rest.resteasy;
 
 import org.jboss.resteasy.core.Dispatcher;
+import org.webbitserver.HttpControl;
+import org.webbitserver.HttpRequest;
 import org.webbitserver.HttpResponse;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -10,22 +12,33 @@ import java.io.OutputStream;
 import java.net.HttpCookie;
 
 public class ReasteasyResponse implements org.jboss.resteasy.spi.HttpResponse {
-    private final HttpResponse httpResponse;
+    private final HttpRequest request;
+    private final HttpResponse response;
+    private final HttpControl control;
     private MultivaluedMap<String, Object> outputHeaders;
+    private boolean wasHandled;
 
-    public ReasteasyResponse(HttpResponse httpResponse, Dispatcher dispatcher) {
-        this.httpResponse = httpResponse;
-        this.outputHeaders = new WebbitResponseHeaders(httpResponse, dispatcher.getProviderFactory());
+    public ReasteasyResponse(HttpRequest request, HttpResponse response, Dispatcher dispatcher, HttpControl control) {
+        this.request = request;
+        this.response = response;
+        this.control = control;
+        this.outputHeaders = new WebbitResponseHeaders(response, dispatcher.getProviderFactory());
     }
 
     @Override
     public int getStatus() {
-        throw new UnsupportedOperationException();
+        return response.status();
     }
 
     @Override
     public void setStatus(int status) {
-        httpResponse.status(status);
+        if(status == 404) {
+            wasHandled = false;
+            control.nextHandler(request, response);
+        } else {
+            wasHandled = true;
+            response.status(status);
+        }
     }
 
     @Override
@@ -38,7 +51,7 @@ public class ReasteasyResponse implements org.jboss.resteasy.spi.HttpResponse {
         return new OutputStream() {
             @Override
             public void write(int i) throws IOException {
-                httpResponse.content(new byte[]{(byte) i});
+                response.content(new byte[]{(byte) i});
             }
         };
     }
@@ -51,17 +64,17 @@ public class ReasteasyResponse implements org.jboss.resteasy.spi.HttpResponse {
         httpCookie.setMaxAge(cookie.getMaxAge());
         httpCookie.setVersion(cookie.getVersion());
         httpCookie.setPath(cookie.getPath());
-        httpResponse.cookie(httpCookie);
+        response.cookie(httpCookie);
     }
 
     @Override
     public void sendError(int status) throws IOException {
-        httpResponse.status(status);
+        response.status(status);
     }
 
     @Override
     public void sendError(int status, String message) throws IOException {
-        httpResponse.status(status);
+        setStatus(status);
     }
 
     @Override
@@ -71,5 +84,9 @@ public class ReasteasyResponse implements org.jboss.resteasy.spi.HttpResponse {
 
     @Override
     public void reset() {
+    }
+
+    public boolean wasHandled() {
+        return wasHandled;
     }
 }
