@@ -32,7 +32,7 @@ public class ReasteasyResponse implements org.jboss.resteasy.spi.HttpResponse {
 
     @Override
     public void setStatus(int status) {
-        if(status == 404) {
+        if (status == 404) {
             wasHandled = false;
             control.nextHandler(request, response);
         } else {

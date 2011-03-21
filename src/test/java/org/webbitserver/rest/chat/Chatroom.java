@@ -1,8 +1,8 @@
 package org.webbitserver.rest.chat;
 
 import com.google.gson.Gson;
-import org.webbitserver.CometConnection;
-import org.webbitserver.CometHandler;
+import org.webbitserver.EventSourceConnection;
+import org.webbitserver.EventSourceHandler;
 import org.webbitserver.HttpRequest;
 
 import javax.ws.rs.POST;
@@ -15,12 +15,13 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Chatroom implements CometHandler {
-    private final List<CometConnection> connections = new ArrayList<CometConnection>();
+public class Chatroom implements EventSourceHandler {
+    private final List<EventSourceConnection> connections = new ArrayList<EventSourceConnection>();
     private final Gson json = new Gson();
 
     static class Outgoing {
         enum Action {JOIN, LEAVE, SAY}
+
         Action action;
         String username;
         String message;
@@ -49,11 +50,11 @@ public class Chatroom implements CometHandler {
     }
 
     public Object[] resources() {
-        return new Object[] {new Session(), new Message()};
+        return new Object[]{new Session(), new Message()};
     }
 
     @Override
-    public void onOpen(CometConnection connection) throws Exception {
+    public void onOpen(EventSourceConnection connection) throws Exception {
         HttpRequest httpRequest = connection.httpRequest();
         connection.data("username", httpRequest.cookieValue("username"));
         connections.add(connection);
@@ -65,17 +66,12 @@ public class Chatroom implements CometHandler {
     }
 
     @Override
-    public void onClose(CometConnection connection) throws Exception {
+    public void onClose(EventSourceConnection connection) throws Exception {
         connections.remove(connection);
         Outgoing outgoing = new Outgoing();
         outgoing.action = Outgoing.Action.LEAVE;
         outgoing.username = (String) connection.data("username");
         broadcast(outgoing);
-    }
-
-    @Override
-    public void onMessage(CometConnection connection, String msg) throws Exception {
-        throw new IllegalStateException("Use the REST API instead");
     }
 
     private void say(String username, String message) {
@@ -88,8 +84,8 @@ public class Chatroom implements CometHandler {
 
     private void broadcast(Outgoing outgoing) {
         String jsonStr = this.json.toJson(outgoing);
-        for (CometConnection connection : connections) {
-            connection.send(jsonStr);
+        for (EventSourceConnection connection : connections) {
+            connection.send("data: " + jsonStr + "\n\n");
         }
     }
 }

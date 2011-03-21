@@ -70,7 +70,7 @@ public class ResteasyHandler implements HttpHandler {
         ResteasyRequest req = wrap(request);
         ReasteasyResponse res = new ReasteasyResponse(request, response, dispatcher, control);
         dispatcher.invoke(req, res);
-        if(res.wasHandled()) {
+        if (res.wasHandled()) {
             response.end();
         }
     }

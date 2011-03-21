@@ -1,4 +1,4 @@
-// EventSource or WebSocket reference.
+// EventSource reference.
 var inbound;
 var outbound = new XMLHttpRequest();
 
@@ -20,10 +20,10 @@ function login() {
         outbound.open("POST", "sessions", true);
         outbound.send(username);
         outbound.onerror = function(e) {
-            logText('* Error:'+ e);
+            logText('* Error:' + e);
         };
         outbound.onreadystatechange = function() {
-            if(outbound.readyState == 4 && outbound.status == 200) {
+            if (outbound.readyState == 4 && outbound.status == 200) {
                 connect();
                 document.getElementById('entry').focus();
             }
@@ -50,10 +50,7 @@ function connect() {
     // clear out any cached content
     document.getElementById('chatlog').value = '';
 
-    if(window.WebSocket) {
-        logText('* Connecting with WebSocket...');
-        inbound = new WebSocket('ws://' + document.location.host + '/message-publisher');
-    } else if(window.EventSource) {
+    if (window.EventSource) {
         logText('* Connecting with EventSource...');
         inbound = new EventSource('message-publisher');
     } else {
@@ -67,6 +64,7 @@ function connect() {
         logText('* Unexpected error');
     };
     inbound.onmessage = function(e) {
+        console.log("DATA", e.data);
         onMessage(JSON.parse(e.data));
     };
 
@@ -79,7 +77,7 @@ function connect() {
                 outbound.open("POST", "messages", true);
                 outbound.send(text);
                 outbound.onerror = function(e) {
-                    logText('* Error:'+ e);
+                    logText('* Error:' + e);
                 }
 
             }
