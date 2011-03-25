@@ -12,7 +12,7 @@ config default
   append CLASSPATH=@/lib/jsr311-api-1.1.1.jar
   append CLASSPATH=@/lib/resteasy-jaxrs-2.1.0.GA.jar
   append CLASSPATH=@/lib/scannotation-1.0.2.jar
-  append SOURCEPATH=@/target/webbit-rest-0.1.0-sources.jar
+  append SOURCEPATH=@/target/webbit-rest-0.1.1-sources.jar
   include org.webbitserver-webbit
 end
 
