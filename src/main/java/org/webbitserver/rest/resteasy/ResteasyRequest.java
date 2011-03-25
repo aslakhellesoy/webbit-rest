@@ -56,8 +56,8 @@ public class ResteasyRequest extends HttpRequestImpl {
     public static ResteasyRequest wrap(final HttpRequest request) throws UnsupportedEncodingException {
         HttpHeaders headers = new ResteasyRequestHeaders(request);
 
-        // see org.jboss.resteasy.plugins.server.servlet.ServletUtil
-        URI uri = new UriBuilderImpl().path(request.uri()).build();
+        // org.jboss.resteasy.plugins.server.servlet.ServletUtil is doing this differently (much more complex - not sure why)
+        URI uri = URI.create(request.uri());
 
         UriInfo uriInfo = new UriInfoImpl(uri, uri, uri.getPath(), uri.getQuery(), PathSegmentImpl.parseSegments(uri.getPath()));
         String body = request.body();
