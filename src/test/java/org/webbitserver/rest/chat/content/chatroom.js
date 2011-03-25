@@ -64,7 +64,6 @@ function connect() {
         logText('* Unexpected error');
     };
     inbound.onmessage = function(e) {
-        console.log("DATA", e.data);
         onMessage(JSON.parse(e.data));
     };
 
