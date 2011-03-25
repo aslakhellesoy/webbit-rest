@@ -1,13 +1,13 @@
-# fig --publish org.webbitserver-webbit-rest/0.1.0
-resource target/webbit-rest-0.1.0.jar
-resource target/webbit-rest-0.1.0-sources.jar
+# fig --publish org.webbitserver-webbit-rest/0.1.1
+resource target/webbit-rest-0.1.1.jar
+resource target/webbit-rest-0.1.1-sources.jar
 resource lib/javassist-3.8.0.GA.jar
 resource lib/jsr311-api-1.1.1.jar
 resource lib/resteasy-jaxrs-2.1.0.GA.jar
 resource lib/scannotation-1.0.2.jar
 
 config default
-  append CLASSPATH=@/target/webbit-rest-0.1.0.jar
+  append CLASSPATH=@/target/webbit-rest-0.1.1.jar
   append CLASSPATH=@/lib/javassist-3.8.0.GA.jar
   append CLASSPATH=@/lib/jsr311-api-1.1.1.jar
   append CLASSPATH=@/lib/resteasy-jaxrs-2.1.0.GA.jar
