@@ -59,7 +59,7 @@ public class ResteasyRequest extends HttpRequestImpl {
         // see org.jboss.resteasy.plugins.server.servlet.ServletUtil
         URI uri = new UriBuilderImpl().path(request.uri()).build();
 
-        UriInfo uriInfo = new UriInfoImpl(uri, uri, request.uri(), null, PathSegmentImpl.parseSegments(request.uri()));
+        UriInfo uriInfo = new UriInfoImpl(uri, uri, uri.getPath(), uri.getQuery(), PathSegmentImpl.parseSegments(uri.getPath()));
         String body = request.body();
         InputStream in = body == null ? new ByteArrayInputStream(new byte[0]) : new ByteArrayInputStream(body.getBytes("UTF-8"));
         return new ResteasyRequest(in, headers, request.method(), uriInfo);
