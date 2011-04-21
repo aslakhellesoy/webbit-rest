@@ -1,6 +1,6 @@
 // EventSource reference.
-var es;
-var xhr = new XMLHttpRequest();
+var inbound;
+var outbound = new XMLHttpRequest();
 
 // Log text to main window.
 function logText(msg) {
@@ -17,13 +17,13 @@ function login() {
         if (window.localStorage) { // store in browser localStorage, so we remember next next
             window.localStorage.username = username;
         }
-        xhr.open("POST", "sessions", true);
-        xhr.send(username);
-        xhr.onerror = function(e) {
-            logText('* Error:'+ e);
+        outbound.open("POST", "sessions", true);
+        outbound.send(username);
+        outbound.onerror = function(e) {
+            logText('* Error:' + e);
         };
-        xhr.onreadystatechange = function() {
-            if(xhr.readyState == 4 && xhr.status == 200) {
+        outbound.onreadystatechange = function() {
+            if (outbound.readyState == 4 && outbound.status == 200) {
                 connect();
                 document.getElementById('entry').focus();
             }
@@ -50,16 +50,20 @@ function connect() {
     // clear out any cached content
     document.getElementById('chatlog').value = '';
 
-    // connect to eventsource
-    logText('* Connecting...');
-    es = new EventSource('message-publisher');
-    es.onopen = function(e) {
+    if (window.EventSource) {
+        logText('* Connecting with EventSource...');
+        inbound = new EventSource('message-publisher');
+    } else {
+        logText('* No EventSource or WebSocket support in your browser :-(');
+        return;
+    }
+    inbound.onopen = function(e) {
         logText('* Connected!');
     };
-    es.onerror = function(e) {
+    inbound.onerror = function(e) {
         logText('* Unexpected error');
     };
-    es.onmessage = function(e) {
+    inbound.onmessage = function(e) {
         onMessage(JSON.parse(e.data));
     };
 
@@ -69,10 +73,10 @@ function connect() {
         if (e.keyCode == 13) { // enter key pressed
             var text = entry.value;
             if (text) {
-                xhr.open("POST", "messages", true);
-                xhr.send(text);
-                xhr.onerror = function(e) {
-                    logText('* Error:'+ e);
+                outbound.open("POST", "messages", true);
+                outbound.send(text);
+                outbound.onerror = function(e) {
+                    logText('* Error:' + e);
                 }
 
             }

@@ -21,6 +21,7 @@ public class WebbitResponseHeaders implements MultivaluedMap<String, Object> {
         this.factory = factory;
     }
 
+    @SuppressWarnings({"unchecked"})
     public void putSingle(String key, Object value) {
         cachedHeaders.putSingle(key, value);
         RuntimeDelegate.HeaderDelegate delegate = factory.createHeaderDelegate(value.getClass());
@@ -31,11 +32,13 @@ public class WebbitResponseHeaders implements MultivaluedMap<String, Object> {
         }
     }
 
+    @SuppressWarnings({"unchecked"})
     public void add(String key, Object value) {
         cachedHeaders.add(key, value);
         addResponseHeader(key, value);
     }
 
+    @SuppressWarnings({"unchecked"})
     protected void addResponseHeader(String key, Object value) {
         RuntimeDelegate.HeaderDelegate delegate = factory.createHeaderDelegate(value.getClass());
         if (delegate != null) {
@@ -65,10 +68,12 @@ public class WebbitResponseHeaders implements MultivaluedMap<String, Object> {
         return cachedHeaders.containsValue(o);
     }
 
+    @SuppressWarnings({"unchecked"})
     public List<Object> get(Object o) {
         return cachedHeaders.get(o);
     }
 
+    @SuppressWarnings({"unchecked"})
     public List<Object> put(String s, List<Object> objs) {
         for (Object obj : objs) {
             addResponseHeader(s, obj);
@@ -93,18 +98,23 @@ public class WebbitResponseHeaders implements MultivaluedMap<String, Object> {
         throw new RuntimeException("Removing a header is illegal");
     }
 
+    @SuppressWarnings({"unchecked"})
     public Set<String> keySet() {
         return cachedHeaders.keySet();
     }
 
+    @SuppressWarnings({"unchecked"})
     public Collection<List<Object>> values() {
         return cachedHeaders.values();
     }
 
+    @SuppressWarnings({"unchecked"})
     public Set<Entry<String, List<Object>>> entrySet() {
         return cachedHeaders.entrySet();
     }
 
+    @Override
+    @SuppressWarnings({"unchecked"})
     public boolean equals(Object o) {
         return cachedHeaders.equals(o);
     }

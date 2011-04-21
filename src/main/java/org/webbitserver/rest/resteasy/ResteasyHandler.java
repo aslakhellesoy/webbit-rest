@@ -68,8 +68,10 @@ public class ResteasyHandler implements HttpHandler {
     @Override
     public void handleHttpRequest(final HttpRequest request, final HttpResponse response, final HttpControl control) throws Exception {
         ResteasyRequest req = wrap(request);
-        org.jboss.resteasy.spi.HttpResponse res = new ReasteasyResponse(response, dispatcher);
+        ReasteasyResponse res = new ReasteasyResponse(request, response, dispatcher, control);
         dispatcher.invoke(req, res);
-        response.end();
+        if (res.wasHandled()) {
+            response.end();
+        }
     }
 }

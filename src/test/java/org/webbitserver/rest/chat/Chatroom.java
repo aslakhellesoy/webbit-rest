@@ -16,13 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Chatroom implements EventSourceHandler {
-    public static final String USERNAME_KEY = "username";
-
     private final List<EventSourceConnection> connections = new ArrayList<EventSourceConnection>();
     private final Gson json = new Gson();
 
     static class Outgoing {
         enum Action {JOIN, LEAVE, SAY}
+
         Action action;
         String username;
         String message;
@@ -51,7 +50,7 @@ public class Chatroom implements EventSourceHandler {
     }
 
     public Object[] resources() {
-        return new Object[] {new Session(), new Message()};
+        return new Object[]{new Session(), new Message()};
     }
 
     @Override
@@ -86,7 +85,7 @@ public class Chatroom implements EventSourceHandler {
     private void broadcast(Outgoing outgoing) {
         String jsonStr = this.json.toJson(outgoing);
         for (EventSourceConnection connection : connections) {
-            connection.send(jsonStr);
+            connection.send("data: " + jsonStr + "\n\n");
         }
     }
 }
