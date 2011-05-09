@@ -1,7 +1,7 @@
 package org.webbitserver.rest.chat;
 
 import org.webbitserver.WebServer;
-import org.webbitserver.handler.StaticFileHandler;
+import org.webbitserver.handler.EmbeddedResourceHandler;
 import org.webbitserver.handler.logging.LoggingHandler;
 import org.webbitserver.handler.logging.SimpleLogSink;
 import org.webbitserver.rest.resteasy.ResteasyHandler;
@@ -14,7 +14,7 @@ public class Main {
         Chatroom chatroom = new Chatroom();
         WebServer webServer = createWebServer(9876)
                 .add(new LoggingHandler(new SimpleLogSink()))
-                .add(new StaticFileHandler("./src/test/java/org/webbitserver/rest/chat/content"))
+                .add(new EmbeddedResourceHandler("org/webbitserver/rest/chat/content"))
                 .add("/message-publisher", chatroom)
                 .add(new ResteasyHandler(chatroom.resources()))
                 .start();

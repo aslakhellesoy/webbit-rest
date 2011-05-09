@@ -20,14 +20,14 @@ public class Main {
     public static class HelloResource {
         @GET
         @Produces("text/plain")
-        public String getClichedMessage() {
+        public String get() {
             return "Hello";
         }
     }
 
     public static void main(String[] args) throws Exception {
         WebServer webServer = WebServers.createWebServer(9877);
-        webServer.add(".*", new ResteasyHandler());
+        webServer.add(new ResteasyHandler(new HelloResource()));
         webServer.start();
 
         System.out.println("Try this: curl " + webServer.getUri() + "hello");
