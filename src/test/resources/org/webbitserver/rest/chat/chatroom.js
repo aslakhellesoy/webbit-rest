@@ -58,6 +58,7 @@ function connect() {
                 logText('* Connected!');
             };
             inbound.onerror = function(e) {
+                console.log(e);
                 logText('* Unexpected error');
             };
             inbound.onmessage = function(e) {

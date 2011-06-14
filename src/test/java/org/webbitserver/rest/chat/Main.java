@@ -14,7 +14,7 @@ public class Main {
         Chatroom chatroom = new Chatroom();
         WebServer webServer = createWebServer(9876)
                 .add(new LoggingHandler(new SimpleLogSink()))
-                .add(new EmbeddedResourceHandler("org/webbitserver/rest/chat/content"))
+                .add(new EmbeddedResourceHandler("org/webbitserver/rest/chat"))
                 .add("/message-publisher", chatroom)
                 .add(new ResteasyHandler(chatroom.resources()))
                 .start();

@@ -38,10 +38,11 @@ build/$(LIBRARY)-src.jar: $(call find,src/main/java,java)
 	@mkdir -p build
 	jar cf $@ -C src/main/java .
 
-# Compile tests
-build/$(LIBRARY)-tests.jar: build/$(LIBRARY).jar $(call find,src/test/java,java)
+# Compile tests and build test jar
+build/$(LIBRARY)-tests.jar: build/$(LIBRARY).jar $(call find,src/test,*)
 	@mkdir -p build/test/classes
 	javac -g -cp $(CLASSPATH):build/$(LIBRARY).jar -d build/test/classes $(call find,src/test/java,java)
+	cp -R src/test/resources/* build/test/classes
 	jar cf $@ -C build/test/classes .
 
 # Run tests, and create .tests-pass if they succeed
