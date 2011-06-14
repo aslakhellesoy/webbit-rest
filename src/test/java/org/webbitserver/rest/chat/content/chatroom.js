@@ -51,38 +51,39 @@ function connect() {
     document.getElementById('chatlog').value = '';
 
     if (window.EventSource) {
-        logText('* Connecting with EventSource...');
-        inbound = new EventSource('message-publisher');
-    } else {
-        logText('* No EventSource or WebSocket support in your browser :-(');
-        return;
-    }
-    inbound.onopen = function(e) {
-        logText('* Connected!');
-    };
-    inbound.onerror = function(e) {
-        logText('* Unexpected error');
-    };
-    inbound.onmessage = function(e) {
-        onMessage(JSON.parse(e.data));
-    };
+        setTimeout(function() {
+            logText('* Connecting with EventSource...');
+            inbound = new EventSource('message-publisher');
+            inbound.onopen = function(e) {
+                logText('* Connected!');
+            };
+            inbound.onerror = function(e) {
+                logText('* Unexpected error');
+            };
+            inbound.onmessage = function(e) {
+                onMessage(JSON.parse(e.data));
+            };
 
-    // wire up text input event
-    var entry = document.getElementById('entry');
-    entry.onkeypress = function(e) {
-        if (e.keyCode == 13) { // enter key pressed
-            var text = entry.value;
-            if (text) {
-                outbound.open("POST", "messages", true);
-                outbound.send(text);
-                outbound.onerror = function(e) {
-                    logText('* Error:' + e);
+            // wire up text input event
+            var entry = document.getElementById('entry');
+            entry.onkeypress = function(e) {
+                if (e.keyCode == 13) { // enter key pressed
+                    var text = entry.value;
+                    if (text) {
+                        outbound.open("POST", "messages", true);
+                        outbound.send(text);
+                        outbound.onerror = function(e) {
+                            logText('* Error:' + e);
+                        }
+
+                    }
+                    entry.value = '';
                 }
-
-            }
-            entry.value = '';
-        }
-    };
+            };
+        }, 0);
+    } else {
+        logText('* No EventSource support in your browser :-(');
+    }
 }
 
 // Connect on load.
