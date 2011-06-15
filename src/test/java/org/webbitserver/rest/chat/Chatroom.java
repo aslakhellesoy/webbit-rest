@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.webbitserver.EventSourceConnection;
 import org.webbitserver.EventSourceHandler;
 import org.webbitserver.HttpRequest;
+import org.webbitserver.netty.contrib.EventSourceMessage;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -85,7 +86,8 @@ public class Chatroom implements EventSourceHandler {
     private void broadcast(Outgoing outgoing) {
         String jsonStr = this.json.toJson(outgoing);
         for (EventSourceConnection connection : connections) {
-            connection.send("data: " + jsonStr + "\n\n");
+            EventSourceMessage message = new EventSourceMessage(jsonStr).retry(3000L);
+            connection.send(message);
         }
     }
 }
