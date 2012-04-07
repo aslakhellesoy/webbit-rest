@@ -16,8 +16,8 @@ public class Main {
                 .add(new LoggingHandler(new SimpleLogSink()))
                 .add(new EmbeddedResourceHandler("org/webbitserver/rest/chat"))
                 .add("/message-publisher", chatroom)
-                .add(new ResteasyHandler(chatroom.resources()))
-                .start();
+                .add(new ResteasyHandler(chatroom.resources()));
+        webServer.start();
 
         System.out.println("Chat room running on: " + webServer.getUri());
     }

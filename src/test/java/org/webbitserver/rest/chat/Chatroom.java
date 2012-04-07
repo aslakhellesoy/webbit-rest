@@ -3,8 +3,8 @@ package org.webbitserver.rest.chat;
 import com.google.gson.Gson;
 import org.webbitserver.EventSourceConnection;
 import org.webbitserver.EventSourceHandler;
+import org.webbitserver.EventSourceMessage;
 import org.webbitserver.HttpRequest;
-import org.webbitserver.netty.contrib.EventSourceMessage;
 
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
