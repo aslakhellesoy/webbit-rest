@@ -1,3 +1,7 @@
+*OBSOLETE*
+
+*THIS PROJECT IS NO LONGER MAINTAINED*. PLEASE SEE https://github.com/aslakhellesoy/webbit-rest FOR A MORE RECENT ALTERNATIVE.
+
 Webbit REST
 ===========
 
